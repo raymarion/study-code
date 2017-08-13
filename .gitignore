@@ -1,0 +1,4 @@
+.idea
+*.py[cod]
+*$py.class
+*.DS_Store

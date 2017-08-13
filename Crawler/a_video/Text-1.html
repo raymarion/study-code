@@ -1,0 +1,160 @@
+<html>
+<head>
+ 
+ <script type="text/javascript">
+  
+    var nextLabel = 0;
+    var refreshLabel = 0;
+    var id = 1;
+  //uslBase = "http://112.29.142.251:6310/120.52.73.45/adultvideo.science/media/videos/iphone/"
+  //http://120.52.73.45 72.42  
+  //uslBase = "http://120.52.73.55/adultvideo.science/media/videos/iphone/"
+  
+  
+  function on_rand() {
+   
+   rand();
+    //code
+  }
+  
+  
+  
+  function rand(){
+  //alert("OK");
+    var date = new Date();
+    var ms = date.getMilliseconds;
+    //alert(ms);
+    var timestamp =(new Date()).valueOf();
+    id = parseInt(timestamp * Math.random()) % 10000 + 0;
+    var num = document.getElementById("num");
+    var url = getUrl(id);
+    num.innerHTML = ""+id+ "<br>" + url;
+    var textId = document.getElementById("textId");
+    textId.value = id;
+    var video = document.getElementById("video");
+    video.src = url;
+    //parent.frames['main'].location.href = "http://120.52.73.45/adultvideo.science/media/videos/iphone/" + id + ".mp4";
+    //setTimeout("retry("+ label +")", 5000);
+  }
+  
+  function on_refresh() {
+    if (refreshLabel > 0) {
+     refreshLabel = 0;
+        //code
+    } else {
+     refreshLabel = 1;
+     rand()
+     setTimeout("retry()", 2000);
+    }
+    //code
+  }
+  
+  function retry() {
+   var video = document.getElementById("video");
+   if (refreshLabel == 1 ) {
+    if (isNaN(video.duration)) {
+    rand();
+    setTimeout("retry()", 5000);
+    //code
+   } else {
+    refreshLabel = 0;
+    //code
+   }
+   }
+   
+  }
+  
+  function next() {
+   var video = document.getElementById("video");
+   if (label != 1 || nextLabel == 0) {
+    return;
+    //code
+   }
+   if (isNaN(video.duration)) {
+    add();
+    //code
+   }
+    //code
+  }
+  
+  
+  function on_add(){
+  //alert("OK");
+    id = id + 1;
+    var num = document.getElementById("num");
+    var url = getUrl(id);
+    num.innerHTML = ""+id+ "<br>" + url;
+    var textId = document.getElementById("textId");
+    textId.value = id;
+    var video = document.getElementById("video");
+    video.src= url;
+    //setTimeout("next("+label+")", 5000);
+    //parent.frames['main'].location.href = "http://120.52.73.45/adultvideo.science/media/videos/iphone/" + id + ".mp4";
+  }
+  
+  function on_sub() {
+   id = id - 1;
+    var num = document.getElementById("num");
+    var url = getUrl(id);
+    num.innerHTML = ""+id+ "<br>" + url;
+    var textId = document.getElementById("textId");
+    textId.value = id;
+    var video = document.getElementById("video");
+    video.src= url;
+    //code
+  }
+  
+  function dirgo(){
+    var textId = document.getElementById("textId");
+    id = parseInt(textId.value);
+    var num = document.getElementById("num");
+    var url = getUrl(id);
+    num.innerHTML = ""+id+ "<br>" + url;
+    var video = document.getElementById("video");
+    video.src=url;
+    //parent.frames['main'].location.href = "http://120.52.73.45/adultvideo.science/media/videos/iphone/" + id + ".mp4";
+  }
+  
+  function boss() {
+   var video = document.getElementById("video");
+   video.src = "";
+   nextLabel = 0;
+   randLabel = 0;
+    //code
+  }
+  
+  function getUrl(id) {
+   var textIp = document.getElementById("textIp");
+   var ip = textIp.value;
+   return "http://" + ip + "/adultvideo.science/media/videos/iphone/" + id + ".mp4";
+    //code
+  }
+  
+  </script>
+</head>
+
+
+<!--<frameset rows="*,80" name="frame1"> 
+<frame id="main" name="main">
+<frame src="1.html" name="button">
+</frameset>-->
+
+<body>
+ <video id="video" src="" controls="controls" autoplay="autoplay" height="85%" onclick="boss()">
+您的浏览器不支持 video 标签。
+</video><br>
+ <input type="text" value="120.52.73.45" id="textIp" >
+ <input type="button" value="random" onclick="on_rand()" style:"height=20px;width=100px;" >
+ <input type="button" onclick="on_refresh()" value="refresh" style:"height=20px;width=100px;" >
+<input type="text" id="textId" >
+<input type="button" onclick="dirgo()" value="GO" style:"height=20px;width=100px;">
+<input type="button" value="<---" onclick="on_sub()" style:"height=20px;width=100px;"> 
+<input type="button" onclick="on_add()" value="next" style:"height=20px;width=100px;">
+
+<div id="num"> </div>
+
+</body>
+
+
+
+</html>

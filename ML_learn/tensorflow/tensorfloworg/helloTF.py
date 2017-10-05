@@ -172,9 +172,9 @@ def first_model():
 
 
 if __name__ == "__main__":
-    # hello()
+    hello()
     # first_flow()
     # first_train()
     # first_train_complete()
-    first_learn()
+    # first_learn()
     # first_model()

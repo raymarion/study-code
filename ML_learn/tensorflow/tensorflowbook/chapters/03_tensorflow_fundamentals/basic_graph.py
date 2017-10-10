@@ -1,10 +1,12 @@
 # Import the tensorflow library, and reference it as `tf`
 import tensorflow as tf
 
+# some function is renamed after 1.0.0 release:
+# http://blog.csdn.net/u010700335/article/details/70885689
 # Build our graph nodes, starting from the inputs
 a = tf.constant(5, name="input_a")
 b = tf.constant(3, name="input_b")
-c = tf.mul(a,b, name="mul_c")
+c = tf.multiply(a,b, name="mul_c")
 d = tf.add(a,b, name="add_d")
 e = tf.add(c,d, name="add_e")
 
@@ -12,10 +14,12 @@ e = tf.add(c,d, name="add_e")
 sess = tf.Session()
 
 # Execute our output node, using our Session
-sess.run(e)
+out = sess.run(e)
+
+print out
 
 # Open a TensorFlow SummaryWriter to write our graph to disk
-writer = tf.train.SummaryWriter('./my_graph', sess.graph)
+writer = tf.summary.FileWriter('./my_graph', sess.graph)
 
 # Close our SummaryWriter and Session objects
 writer.close()

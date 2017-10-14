@@ -47,7 +47,7 @@ def basic_graph():
     # $ tensorboard --logdir='./my_graph'
 
 
-def name_scopes():
+# def name_scopes():
 
 
 

@@ -1,5 +1,7 @@
 import tensorflow as tf
 
+
+
 x_data = [[1, 2], [2, 3], [3, 1], [4, 3], [5, 3], [6, 2]]
 y_data = [[0], [0], [0], [1], [1], [1]]
 # placeholders for a tensor that will be always fed.

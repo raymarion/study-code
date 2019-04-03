@@ -2,6 +2,7 @@
 import csv
 import datetime
 import Tkinter
+import os
 from Tkinter import *
 import tkinter.filedialog
 import xlrd
@@ -276,7 +277,7 @@ def match_records_schedule(schedule_dict, users_records_dict):
 
 def output_result(result_dict, users_summary_dict, err_list, output_dir_name):
     if output_dir_name is "":
-        output_dir_name = "."
+        output_dir_name = os.curdir
     workbook = xlwt.Workbook()
     sheet_result = workbook.add_sheet("records")
     row = 1
@@ -323,7 +324,7 @@ def output_result(result_dict, users_summary_dict, err_list, output_dir_name):
         sheet_err.write(row, 2, i[2])
         row = row + 1
 
-    file_name = output_dir_name + "/result_"+datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")+".xls"
+    file_name = output_dir_name + os.path.sep + "result-"+datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")+".xls"
     workbook.save(file_name)
     return file_name
 

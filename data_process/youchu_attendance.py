@@ -65,31 +65,53 @@ def parse_time_from_float(f_time):
     return u'{:0=2}'.format(hour) + u":" + u'{:0=2}'.format(minute)
 
 
-def read_file(filename):
-    with codecs.open(filename, 'r', encoding='gb2312') as csvfile:
-        reader = csv.reader(csvfile)
-        list = []
-        for row in reader:
-            if row.__len__() == 5 and row[3].__len__() > 15:
-                list.append(row)
-        return list
 
 
 
 def read_records_file(filename):
     #  read records file and output 2 dict of user info and user records with key of name
-    row_list = read_file(filename)
+    type = 0
+    row_list = []
+
+    with codecs.open(filename, 'r', encoding='gb2312') as csv_file:
+        reader = csv.reader(csv_file)
+        first = reader.next()
+        if first[0] == u"姓名":
+            # new format records
+            type = 1
+            for row in reader:
+                if row.__len__() >= 5 and row[3].__len__() == 10:
+                    row_list.append(row)
+        else:
+            type = 0
+            for row in reader:
+                if row.__len__() == 5 and row[3].__len__() > 15:
+                    row_list.append(row)
+
     users_records = {}
     users_info = {}
-    for row in row_list:
-        name = unicode(row[2]).replace(" ", "")
-        if not name in users_info:
-            users_info[name] = (row[0], row[1])
-    for row in row_list:
-        name = unicode(row[2]).replace(" ", "")
-        if not name in users_records:
-            users_records[name] = []
-        users_records[name].append(parse_date_time(row[3]))
+    if type == 0:
+        for row in row_list:
+            name = unicode(row[2]).replace(" ", "")
+            if not name in users_info:
+                users_info[name] = (row[0], row[1])
+        for row in row_list:
+            name = unicode(row[2]).replace(" ", "")
+            if not name in users_records:
+                users_records[name] = []
+            users_records[name].append(parse_date_time(row[3]))
+    if type == 1:
+        for row in row_list:
+            name = unicode(row[0]).replace(" ", "")
+            if not name in users_info:
+                users_info[name] = (row[2], row[1])
+        for row in row_list:
+            name = unicode(row[0]).replace(" ", "")
+            if not name in users_records:
+                users_records[name] = []
+            for d in row[4:]:
+                if d is not None and d != "":
+                    users_records[name].append(parse_date_time_new(row[3] + " " + d))
     # users_records: {name: [date, date_time]}
     return users_info, users_records
 
@@ -101,6 +123,13 @@ def parse_time(time_str):
 
 def parse_date_time(time_str):
     time_format = "%m/%d/%Y %I:%M:%S %p"
+    date_time = datetime.datetime.strptime(time_str, time_format)
+    date_format = "%Y-%m-%d"
+    return date_time.strftime(date_format), date_time
+
+
+def parse_date_time_new(time_str):
+    time_format = "%Y-%m-%d %H:%M"
     date_time = datetime.datetime.strptime(time_str, time_format)
     date_format = "%Y-%m-%d"
     return date_time.strftime(date_format), date_time

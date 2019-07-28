@@ -72,21 +72,38 @@ def read_records_file(filename):
     #  read records file and output 2 dict of user info and user records with key of name
     type = 0
     row_list = []
+    if filename[-4:] == ".csv":
+        with codecs.open(filename, 'r', encoding='gb2312') as csv_file:
+            reader = csv.reader(csv_file)
+            first = reader.next()
+            if first[0] == u"姓名":
+                # new format records
+                type = 1
+                for row in reader:
+                    if row.__len__() >= 5 and row[3].__len__() == 10:
+                        row_list.append(row)
+            elif first[0] == u"No":
+                type = 2
+                for row in reader:
+                    if row.__len__() >= 6 and row[5].__len__() >= 10:
+                        row_list.append(row)
+            else:
+                type = 0
+                for row in reader:
+                    if row.__len__() == 5 and row[3].__len__() > 15:
+                        row_list.append(row)
+    else :
+        workbook = xlrd.open_workbook(filename)
+        sheet = workbook.sheet_by_index(0)
+        # new format records in xlsx, with two date format
+        type = 2
+        for r in range(1, sheet.nrows - 1):
+            row = sheet.row_values(r)
+            if row.__len__() >= 6 and row[5].__len__() >= 10:
+                row_list.append(row)
 
-    with codecs.open(filename, 'r', encoding='gb2312') as csv_file:
-        reader = csv.reader(csv_file)
-        first = reader.next()
-        if first[0] == u"姓名":
-            # new format records
-            type = 1
-            for row in reader:
-                if row.__len__() >= 5 and row[3].__len__() == 10:
-                    row_list.append(row)
-        else:
-            type = 0
-            for row in reader:
-                if row.__len__() == 5 and row[3].__len__() > 15:
-                    row_list.append(row)
+
+
 
     users_records = {}
     users_info = {}
@@ -112,6 +129,18 @@ def read_records_file(filename):
             for d in row[4:]:
                 if d is not None and d != "":
                     users_records[name].append(parse_date_time_new(row[3] + " " + d))
+    if type == 2:
+        for row in row_list:
+            name = unicode(row[3]).replace(" ", "")
+            if not name in users_info:
+                users_info[name] = ("", row[2])
+        for row in row_list:
+            name = unicode(row[3]).replace(" ", "")
+            if not name in users_records:
+                users_records[name] = []
+            users_records[name].append(parse_date_time_xlsx(row[4], row[5]))
+
+
     # users_records: {name: [date, date_time]}
     return users_info, users_records
 
@@ -135,7 +164,15 @@ def parse_date_time_new(time_str):
     return date_time.strftime(date_format), date_time
 
 
-def time_str(time):
+def parse_date_time_xlsx(d, t):
+    time_format = "%Y/%m/%d %I:%M:%S %p"
+    time_str = d.replace("-", "/") + " " + t
+    date_time = datetime.datetime.strptime(time_str, time_format)
+    date_format = "%Y-%m-%d"
+    return date_time.strftime(date_format), date_time
+
+
+def get_time_str(time):
     time_format = "%m/%d/%Y %I:%M:%S %p"
     return time.strftime(time_format)
 
@@ -359,7 +396,7 @@ def output_result(result_dict, users_summary_dict, err_list, output_dir_name):
 
 
 def process_files(raw_records_file_name, schedule_file_name, output_dir_name):
-    # todo load files and compare records and schedule, compute the work pair mark time and work hours
+    # load files and compare records and schedule, compute the work pair mark time and work hours
     schedule_dict = read_schedule_file(schedule_file_name)
     users_info_dict, users_records_dict = read_records_file(raw_records_file_name)
     result_dict, users_summary_dict, err_list = match_records_schedule(schedule_dict, users_records_dict)
@@ -380,7 +417,7 @@ def button_click():
 
 
 def choose_file():
-    filename = tkinter.filedialog.askopenfilename(filetypes=[("csv", "csv")])
+    filename = tkinter.filedialog.askopenfilename(filetypes=[("csv", "csv"), ("Excel", "xlsx")])
     if filename != '':
         raw_records.delete(0, END)
         raw_records.insert(0, filename)
